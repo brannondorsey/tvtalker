@@ -23,6 +23,17 @@ ffmpeg -i /Volumes/Untitled/hdhomerun/video/programs/raw/<YYYY-MM-DD_STATION_pro
 
 ![Segment Files](images/segment_files.png)
 
+It is important that for 59.94 FPS video these segments have a keyframe interval of around
+
+```
+0.016684
+0.016683
+0.016683
+0.016684
+```
+
+This can be tested with the [detect keyframe interval command](COMMANDS.md#Detect-keyframe-interval).
+
 ## Tag words
 
 Use Premiere Pro to tag words from videos
