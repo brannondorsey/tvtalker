@@ -1,0 +1,5 @@
+.DS_Store
+premiere/*
+node_modules/*
+tests/*
+!tests/clips/.gitkeep

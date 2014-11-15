@@ -1,0 +1,30 @@
+{
+  "name": "ffmpeg_video_tools",
+  "version": "0.0.1",
+  "description": "ffmpeg helper scripts",
+  "keywords": [
+  ],
+  "homepage": "https://github.com/brannondorsey/exchatter",
+  "bugs": {
+    "url": "http://github.com/brannondorsey/exchatter/issues",
+    "email": "brannon@brannondorsey.com"
+  },
+  "author": "Brannon Dorsey <brannon@brannondorsey.com> (http://brannondorsey.com)",
+  "directories": {
+    "lib": "src"
+  },
+  "dependencies" : {
+    "argv": "0.0.x",
+    "underscore": "1.7.x",
+    "moment": "2.8.x",
+    "shelljs": "0.3.x",
+    "timecode": "0.0.1"
+  },
+  "engines": {
+    "node": ">=v0.10.0"
+  },
+  "license": {
+    "url": "https://raw.github.com/brannondorsey/exchatter/master/license",
+    "type": "MIT"
+  }
+}
