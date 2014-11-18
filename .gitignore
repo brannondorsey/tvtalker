@@ -3,3 +3,4 @@ premiere/
 node_modules/
 tests/
 !tests/clips/.gitkeep
+*.mov
