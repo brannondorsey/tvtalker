@@ -4,7 +4,9 @@ argv = require('argv'),
 shell = require('shelljs'),
 path = require('path'),
 csv = require('csv'),
-timecode = require('timecode').Timecode;
+timecode = require('timecode').Timecode,
+spawn = require('child_process').spawn,
+QueueIt = require('queueit');
 
 var clips = {
 	key: {},
@@ -20,6 +22,10 @@ var segments = {
 	key: {},
 	data: [] 
 };
+
+// raw clip CSV data
+var clipsCSV = undefined;
+var videoDir = '/Volumes/Untitled/hdhomerun/video';
 
 var args = argv.option([{
 	   
@@ -54,15 +60,21 @@ var args = argv.option([{
 	    example: "'script --toId=1' or 'script -t 1'"
 	}]).run().options;
 
-if (!_.isUndefined(args.message)) {
+if (!shell.which('ffmpeg')) {
+	
+	console.log('Please install ffmpeg.');
+	process.exit(1);
+
+} else if (!fs.existsSync(videoDir)) {
+
+	console.log('Video directory "' + videoDir + '" does not exist');
+	process.exit(1);
+
+} else if (!_.isUndefined(args.message)) {
 
 	console.log('Message mode activated. Ignoring any cut mode parameters.');
 	
 	loadData(function(){
-
-		console.log(clips.data['chicago_']);
-		console.log(programs.data[0]);
-		console.log(segments.data[0]);
 
 		var message = args.message;
 		var messageWords = message.split(' ');
@@ -128,8 +140,48 @@ if (!_.isUndefined(args.message)) {
 			toId = parseInt(args.fromId);
 			console.log('--toId set to ' + fromId);
 		}
-
+		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
+		
+		var taskQueue = [];
+		var taskIndex = 1;
+		var maxTasks = 80;
+		var currentTasks = 0;
+
+		for (var i = 1; i < clipsCSV.length; i++) {
+
+			taskQueue.push(function(i){
+
+				var row = clipsCSV[i];
+				var id = row[clips.key.id];
+				var program = programs.data[row[clips.key.program_id] - 1].basename;
+				var segment = segments.data[row[clips.key.segment_id] - 1].segment;
+				var word = row[clips.key.word];
+				var timecodeIn = formatTimecode(row[clips.key.timecode_in]);
+				var timecodeOut = formatTimecode(row[clips.key.timecode_out]);
+
+				var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
+				var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
+
+				var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile;		
+				console.log(i + ' cutting "' + word + '" from file ' + program + '/' + segment + ' ' + timecodeIn + '-' + timecodeOut);
+				var result = shell.exec(command, { silent: true });
+				
+				shell.exec(command, { silent: true, async: true }, function(err, output) {
+					
+					taskIndex++;
+					currentTasks--;
+
+					if (taskIndex < clipsCSV.length - 2 &&
+						currentTasks < maxTasks) {
+						taskQueue[taskIndex++](i+1);
+						currentTasks++;
+					}
+				});
+			});	
+		}
+
+		taskQueue[0](1);
 	});
 
 } else argv.help();
@@ -137,7 +189,7 @@ if (!_.isUndefined(args.message)) {
 // load clips.csv and use it to fill clips array
 function loadData(callback) {
 
-	var clipsFile = __dirname + '/data/clips.csv';
+	var clipsFile    = __dirname + '/data/clips.csv';
 	var programsFile = __dirname + '/data/programs.csv';
 	var segmentsFile = __dirname + '/data/segments.csv';
 
@@ -207,9 +259,12 @@ function loadData(callback) {
 
 				if (err) loadFileError(clipsFile);
 				
+				
 				csv.parse(clipsData, function(err, clipsData){
 
 					if (err) parseFileError(clipsFile);
+
+					clipsCSV = clipsData;
 
 					// fill key for easy lookup
 					for (var i = 0; i < clipsData[0].length; i++) {
@@ -268,7 +323,7 @@ function formatTimecode(timestamp, clipId) {
 	// this is some dumb bullshit, fix this soon
 	var fps = (clipId >= 239 && clipId <= 349) ? "29.97" : "59.94";
 	
-	var frameOffset = (fps == "59.94") ? 3 : 1.5;
+	var frameOffset = (fps == "59.94") ? 4 : 2;
 	
 	// var beginning = timecode.slice(0, 8);
 	// var end = timecode.slice(9);
