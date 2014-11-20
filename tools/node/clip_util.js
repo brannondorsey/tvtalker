@@ -6,6 +6,7 @@ path = require('path'),
 csv = require('csv'),
 timecode = require('timecode').Timecode,
 spawn = require('child_process').spawn,
+exec = require('child_process'),exec,
 QueueIt = require('queueit');
 
 var clips = {
@@ -26,6 +27,7 @@ var segments = {
 // raw clip CSV data
 var clipsCSV = undefined;
 var videoDir = '/Volumes/Untitled/hdhomerun/video';
+var maxOpenFiles = 1024;
 
 var args = argv.option([{
 	   
@@ -34,12 +36,6 @@ var args = argv.option([{
 	    type: 'string',
 	    description: 'Message',
 	    example: "'script --message=value' or 'script -m value'"
-	},{
-	    name: 'segmentDir',
-	    short: 'd',
-	    type: 'string',
-	    description: 'Directory that holds segment video',
-	    example: "'script --segmentDir=value' or 'script -s value'"
 	},{
 		name: 'cut',
 		short: 'c',
@@ -75,7 +71,7 @@ if (!shell.which('ffmpeg')) {
 	console.log('Message mode activated. Ignoring any cut mode parameters.');
 	
 	loadData(function(){
-
+		
 		var message = args.message;
 		var messageWords = message.split(' ');
 		var clipData = [];
@@ -83,7 +79,7 @@ if (!shell.which('ffmpeg')) {
 
 		for (var i = 0; i < messageWords.length; i++) {
 
-			var w = clips[messageWords[i] + '_'];
+			var w = clips.data[messageWords[i] + '_'];
 			
 			// if the word exists
 			if (w !== undefined) {
@@ -94,7 +90,7 @@ if (!shell.which('ffmpeg')) {
 				missingWords.push(messageWords[i]);
 			}
 		}
-
+ 
 		var output = '';
 
 		if (missingWords.length > 0) {
@@ -108,17 +104,26 @@ if (!shell.which('ffmpeg')) {
 
 		} else {
 
-			for (var i = 0; i < clipData.length; i++) {
+			// check to make sure that all clips exist
+			// and alert if they do not, suggesting that
+			// the user should run script --cut to sync the
+			// clip files to the database.
+			
+			// concatonate files.
+			
+			// open movie.
+			
+			// for (var i = 0; i < clipData.length; i++) {
 				
-				var inTime = formatTimecode(clipData[i].timecodeIn, clipData[i].id);
-				var outTime = formatTimecode(clipData[i].timecodeOut, clipData[i].id);
+			// 	var inTime = formatTimecode(clipData[i].timecodeIn, clipData[i].id);
+			// 	var outTime = formatTimecode(clipData[i].timecodeOut, clipData[i].id);
 
-				console.log('splicing from ' + inTime + ' to ' + outTime);
+			// 	console.log('splicing from ' + inTime + ' to ' + outTime);
 
-				var inputFile = args.segmentDir + '/' + segments[clipData[i].segmentId - 1];
-				var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/data/clips/' + i + path.extname(inputFile);
-				var result = shell.exec(command, {silent: true}).output;
-			}
+			// 	var inputFile = args.segmentDir + '/' + segments[clipData[i].segmentId - 1];
+			// 	var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/data/clips/' + i + path.extname(inputFile);
+			// 	var result = shell.exec(command, {silent: true}).output;
+			// }
 		}
 	});
 
@@ -143,6 +148,12 @@ if (!shell.which('ffmpeg')) {
 		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
 		
+		shell.exec('ulimit -S -n ' + maxOpenFiles, {silent: true}).output
+
+		if (shell.error()) {
+			console.log('error setting open file limit with ulimit');
+		}
+
 		var q = new QueueIt({ max_num_processes : 100 });
 
 		q.start();
@@ -154,8 +165,8 @@ if (!shell.which('ffmpeg')) {
 			var program = programs.data[row[clips.key.program_id] - 1].basename;
 			var segment = segments.data[row[clips.key.segment_id] - 1].segment;
 			var word = row[clips.key.word];
-			var timecodeIn = formatTimecode(row[clips.key.timecode_in]);
-			var timecodeOut = formatTimecode(row[clips.key.timecode_out]);
+			var timecodeIn = formatTimecode(row[clips.key.timecode_in], row[clips.key.id]);
+			var timecodeOut = formatTimecode(row[clips.key.timecode_out], row[clips.key.id], 2);
 
 			var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
 			var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
@@ -272,7 +283,6 @@ function loadData(callback) {
 
 				if (err) loadFileError(clipsFile);
 				
-				
 				csv.parse(clipsData, function(err, clipsData){
 
 					if (err) parseFileError(clipsFile);
@@ -284,10 +294,12 @@ function loadData(callback) {
 						clips.key[clipsData[0][i]] = i;
 					}
 
+					console.log(clipsData.length + ' clips loaded.');
 					for (var i = 1; i < clipsData.length; i++) {
 						
-						var row = clipsData[i];
 
+						var row = clipsData[i];
+						
 						// append word with '_' to avoid overriding
 						// Object.prototype methods
 						clips.data[row[clips.key.word] + '_'] = {
@@ -318,32 +330,17 @@ function loadData(callback) {
 	}
 }
 
-function getTimecodes(word) {
-	
-	var clip = clips[word + '_'];
-	if (clip !== undefined) {
-		return {
-			in: formatTimecode(word.timecodeIn),
-			out: formatTimecode(word.timecodeOut)
-		}
-	}
-
-	return word;
-}
-
-function formatTimecode(timestamp, clipId) {
+function formatTimecode(timestamp, clipId, offset) {
 
 	// this is some dumb bullshit, fix this soon
-	var fps = (clipId >= 239 && clipId <= 349) ? "29.97" : "59.94";
-	
-	var frameOffset = (fps == "59.94") ? 4 : 2;
-	
-	// var beginning = timecode.slice(0, 8);
-	// var end = timecode.slice(9);
-	// var parts = timecode.split(';');
-	// return beginning.replace(/;/g, ':') + '.' + (((parseInt(end))/fps).toFixed(2).toString()).substring(2);
+	var fps = (clipId >= 239 && clipId <= 460) ? "29.97" : "59.94";
 	var ts = timecode.init({framerate: fps, drop_frame: true, timecode: timestamp});
-	ts.add(frameOffset);
+	
+	if (!_.isUndefined(offset)) {
+		var frameOffset = (fps == "59.94") ? offset : offset/2;
+		ts.add(frameOffset);
+	}
+
 	return ts.toString().slice(0, 8) + '.' + (((parseInt(ts.toString().slice(9)))/fps).toFixed(2).toString()).substring(2);
 }
 
