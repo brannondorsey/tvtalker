@@ -143,45 +143,58 @@ if (!shell.which('ffmpeg')) {
 		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
 		
-		var taskQueue = [];
-		var taskIndex = 1;
-		var maxTasks = 80;
-		var currentTasks = 0;
+		var q = new QueueIt({ max_num_processes : 100 });
+
+		q.start();
 
 		for (var i = 1; i < clipsCSV.length; i++) {
 
-			taskQueue.push(function(i){
+			var row = clipsCSV[i];
+			var id = row[clips.key.id];
+			var program = programs.data[row[clips.key.program_id] - 1].basename;
+			var segment = segments.data[row[clips.key.segment_id] - 1].segment;
+			var word = row[clips.key.word];
+			var timecodeIn = formatTimecode(row[clips.key.timecode_in]);
+			var timecodeOut = formatTimecode(row[clips.key.timecode_out]);
 
-				var row = clipsCSV[i];
-				var id = row[clips.key.id];
-				var program = programs.data[row[clips.key.program_id] - 1].basename;
-				var segment = segments.data[row[clips.key.segment_id] - 1].segment;
-				var word = row[clips.key.word];
-				var timecodeIn = formatTimecode(row[clips.key.timecode_in]);
-				var timecodeOut = formatTimecode(row[clips.key.timecode_out]);
+			var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
+			var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
 
-				var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
-				var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
+			var arguments = ('-y -i ' + inputFile + ' -c copy -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile).split(' ');		
+			
+			console.log(i + ' cutting "' + word + '" from file ' + program + '/' + segment + ' ' + timecodeIn + '-' + timecodeOut);
+			// var result = shell.exec(command, { silent: true });
+		  	var count = 0;
+		  	q.push({ 
+		      command: 'ffmpeg',
+		      arguments: arguments,
+		      cb : function (err,data) {
 
-				var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile;		
-				console.log(i + ' cutting "' + word + '" from file ' + program + '/' + segment + ' ' + timecodeIn + '-' + timecodeOut);
-				var result = shell.exec(command, { silent: true });
-				
-				shell.exec(command, { silent: true, async: true }, function(err, output) {
-					
-					taskIndex++;
-					currentTasks--;
+		      		// process error, this is behaving incorrectly
+		      		// with ffmpeg
+		      		if (arguments.length == 2) {
 
-					if (taskIndex < clipsCSV.length - 2 &&
-						currentTasks < maxTasks) {
-						taskQueue[taskIndex++](i+1);
-						currentTasks++;
-					}
-				});
-			});	
+		      		} else {
+
+		      			// process exit
+		      			if (arguments[0] === null) {
+		      				
+		      				count++;
+		      				console.log(count + ' files cut');
+		      				
+		      				if (count == clipsCSV.length - 1) {
+		      					q.stop();
+		      				}
+		      				
+		      			// data
+		      			} else {
+		      				
+		      			}
+		      		}
+		        }
+		    });
 		}
 
-		taskQueue[0](1);
 	});
 
 } else argv.help();
