@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+
+        <link rel="stylesheet" href="style/jquery/jquery.textcomplete.css">
+        <link rel="stylesheet" href="style/bootstrap/bootstrap.css">
+        <!-- <link rel="stylesheet" href="style/main.css"> -->
+        <style type="text/css">
+            
+            body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
+
+            #message-box {
+                width: 60%;
+                margin: auto;
+                margin-top: 100px;
+            }
+
+            #past-messages {
+                width: 60%;
+                margin: auto;
+                margin-top: 30px;
+            }
+
+        </style>
+
+        <script src="js/jquery/jquery-2.1.1.min.js"></script>
+        <script src="js/socket.io-1.2.1.js"></script>
+
+    </head>
+    <body>
+        <div class="container">
+            
+            <textarea id="message-box" class="form-control" rows="1"></textarea>
+
+            <ul id="past-messages" class="list-group"></ul>
+        </div>
+
+        <script src="js/jquery/jquery.textcomplete.js"></script>
+        <script>
+
+            $(document).ready(function(){
+
+                $('#message-box').textcomplete([
+                    {
+                        match: /(\s)(\w{1,})$/,
+                        search: searchFunction,
+                        replace: function (word) {
+                            return ' ' + word + ' ';
+                        }
+                    },
+                    {
+                        match: /(^)(\w{1,})$/,
+                        search: searchFunction,
+                        replace: function (word) {
+                            return word + ' ';
+                        }
+                    }
+                ]);
+
+                $('#message-box').on('keypress', function(evt){
+                    
+                    var key = evt.keyCode | evt.which;
+                    
+                    // enter
+                    if (key == 13) {
+                        evt.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                var socket = io('http://127.0.0.1:3000');
+                
+                function searchFunction(term, callback) {
+                    
+                    $.getJSON('/autocomplete', { word: term })
+                        .done(function (resp) {
+                            
+                            var words = [];
+                            if (resp.error === undefined) {
+                                
+                                for (var i = 0; i < resp.length; i++) {
+                                    words.push(resp[i].word);
+                                }
+                            }
+
+                            callback(words);
+                            
+                        }).fail(function () {
+                            callback([]);
+                        });
+                }
+
+                function sendMessage() {
+
+                    var message = $('#message-box').val().trim();
+                    var data = {
+                        message: message
+                    }
+
+                    socket.emit('message', data);
+                    $('#message-box').val('');
+                    $('#past-messages').append('<li class="list-group-item">' + message + '</li>');
+                }
+            });
+
+        </script>
+    </body>
+</html>

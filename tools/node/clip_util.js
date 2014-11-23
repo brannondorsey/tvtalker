@@ -76,6 +76,8 @@ if (!shell.which('ffmpeg')) {
 		var messageWords = message.split(' ');
 		var clipData = [];
 		var missingWords = [];
+		var tmp = [];
+		var m;
 
 		for (var i = 0; i < messageWords.length; i++) {
 
@@ -112,18 +114,62 @@ if (!shell.which('ffmpeg')) {
 			// concatonate files.
 			
 			// open movie.
-			
-			// for (var i = 0; i < clipData.length; i++) {
+
+			for (var i = 0; i < clipData.length; i++) {
 				
-			// 	var inTime = formatTimecode(clipData[i].timecodeIn, clipData[i].id);
-			// 	var outTime = formatTimecode(clipData[i].timecodeOut, clipData[i].id);
+				var clipPath = videoDir + '/word_clips/' + clipData[i].id + '.mov';
+				if (!fs.existsSync(clipPath)) {
+					
+					m = clipPath + ' exists in the database, but could not be found.';
+					m += 'Try recutting the database with "--cut"';
+					console.log(m);
 
-			// 	console.log('splicing from ' + inTime + ' to ' + outTime);
+					process.exit(1);
 
-			// 	var inputFile = args.segmentDir + '/' + segments[clipData[i].segmentId - 1];
-			// 	var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/data/clips/' + i + path.extname(inputFile);
-			// 	var result = shell.exec(command, {silent: true}).output;
-			// }
+				} else {
+
+					_.once(function(){
+						
+						if (fs.existsSync(__dirname + '/data/tmp.txt')) {
+							fs.unlinkSync(__dirname + '/data/tmp.txt');
+						}
+					});
+
+					tmp.push('file \'' + clipPath + '\'');
+				}
+
+				// var inTime = formatTimecode(clipData[i].timecodeIn, clipData[i].id);
+				// var outTime = formatTimecode(clipData[i].timecodeOut, clipData[i].id);
+
+				// console.log('splicing from ' + inTime + ' to ' + outTime);
+
+				// var inputFile = args.segmentDir + '/' + segments[clipData[i].segmentId - 1];
+				// var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/data/clips/' + i + path.extname(inputFile);
+				// var result = shell.exec(command, {silent: true}).output;
+			}
+
+			fs.writeFile(__dirname + '/data/tmp.txt', tmp.join('\n'), function(err){
+				
+				if (err) {
+					console.log('error saving ' + __dirname + '/data/tmp.txt');
+				} else {
+					
+					var files = fs.readdirSync(__dirname + '/data/messages');
+					if (_.isUndefined(files) || _.isNull(files)) {
+						console.log('Error reading files from' + __dirname + '/data/messages');
+						process.exit(1);
+					}
+
+					var outputFilePath = __dirname + '/data/messages/' + (files.length + 1) +'.mov';
+					if (shell.exec('ffmpeg -f concat -i ' + __dirname + '/data/tmp.txt -c copy ' + outputFilePath, {silent: true}).code == 0) {
+							
+						console.log('Success, run the following command to open file:');
+						console.log('open ' + outputFilePath + ' -a "QuickTime Player"');
+					} else {
+						console.log('Error concatonating videos with FFmpeg.');	
+					}
+				}
+			});
 		}
 	});
 
@@ -148,6 +194,7 @@ if (!shell.which('ffmpeg')) {
 		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
 		
+		console.log('Setting system max open files to ' + maxOpenFiles + ' with "ulimit"');
 		shell.exec('ulimit -S -n ' + maxOpenFiles, {silent: true}).output
 
 		if (shell.error()) {

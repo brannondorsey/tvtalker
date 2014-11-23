@@ -21,7 +21,10 @@
     "timecode": "0.0.1",
     "csv": "0.4.x",
     "async": "0.9.x",
-    "queueit": "0.0.1"
+    "queueit": "0.0.1",
+    "sqlite3": "3.0.x",
+    "express": "4.x.x",
+    "socket.io": "1.2.x"
   },
   "engines": {
     "node": ">=v0.10.0"
