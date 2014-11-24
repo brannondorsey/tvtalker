@@ -179,7 +179,7 @@ if (!shell.which('ffmpeg')) {
 
 	loadData(function(){
 
-		var fromId = 0;
+		var fromId = 1;
 		var toId = undefined;
 
 		if (!_.isUndefined(args.fromId)) {
@@ -188,8 +188,8 @@ if (!shell.which('ffmpeg')) {
 		}
 
 		if (!_.isUndefined(args.toId)) {
-			toId = parseInt(args.fromId);
-			console.log('--toId set to ' + fromId);
+			toId = parseInt(args.toId);
+			console.log('--toId set to ' + toId);
 		}
 		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
@@ -205,7 +205,9 @@ if (!shell.which('ffmpeg')) {
 
 		q.start();
 
-		for (var i = 1; i < clipsCSV.length; i++) {
+		var max = (toId !== undefined) ? toId + 1: clipsCSV.length;
+
+		for (var i = fromId; i < max; i++) {
 
 			var row = clipsCSV[i];
 			var id = row[clips.key.id];
@@ -240,7 +242,7 @@ if (!shell.which('ffmpeg')) {
 		      				count++;
 		      				console.log(count + ' files cut');
 		      				
-		      				if (count == clipsCSV.length - 1) {
+		      				if (count == max - fromId) {
 		      					q.stop();
 		      				}
 		      				

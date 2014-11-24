@@ -33,7 +33,11 @@
             }
 
             #past-messages {
-                margin-top: 30px;
+                margin-top: 60px;
+            }
+
+            #toolbar {
+                margin-top: 5px;
             }
 
             span.match {
@@ -51,11 +55,16 @@
             <div id="message-container">
                 <div id="match-container"></div>
                 <textarea id="message-box" class="form-control" rows="1"></textarea>
-                <!-- <div class="btn-toolbar" role="toolbar">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default">Left</button>
+                <div id="toolbar" class="btn-toolbar pull-right" role="toolbar">               
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-comment"></span>
+                        </button>
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
                     </div>
-                </div> -->
+                </div>
                 <ul id="past-messages" class="list-group"></ul>
             </div>
         </div>

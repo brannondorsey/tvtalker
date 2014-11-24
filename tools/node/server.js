@@ -37,12 +37,12 @@ app.get('/autocomplete', function(req, res){
 
 	} else {
 
-		var error = {
-						error: "API_ERROR",
-						message: "You must provide a 'word' GET parameter."
-					};
+		var err = {
+			error: "API_ERROR",
+			message: "You must provide a 'word' GET parameter."
+		};
 
-		res.send(error);
+		res.send(err);
 	}
 });
 
