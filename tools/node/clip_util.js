@@ -220,7 +220,7 @@ if (!shell.which('ffmpeg')) {
 			var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
 			var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
 
-			var arguments = ('-y -i ' + inputFile + ' -c copy -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile).split(' ');		
+			var arguments = ('-y -i ' + inputFile + ' -c:v copy -c:a libfaac -ac 2 -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile).split(' ');		
 			
 			console.log(i + ' cutting "' + word + '" from file ' + program + '/' + segment + ' ' + timecodeIn + '-' + timecodeOut);
 			// var result = shell.exec(command, { silent: true });
