@@ -15,7 +15,7 @@ function VideoConcatonator(db, callback) {
 	fs.exists(self._videoDir, function(exists){
 		
 		if (!exists) {
-			console.log('[Error] Video directory "' + videoDir + '" does not exist');
+			console.log('[Error] Video directory "' + self._videoDir + '" does not exist');
 		}
 
 		// cache sequences and programs
@@ -97,13 +97,14 @@ VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, ca
 						    // console.log('stdout: ' + stdout);
 						    // console.log('stderr: ' + stderr);
 						    
+
 						    if (error === null) {
 						    	console.log('[Notice] video file saved to ' + outputFile);
-								callback(null, path.resolve(outputFile));
 							} else {
 								console.log('[Error] ' + error);
-								callback(true, null);
 							}
+
+							callback(err);
 						});
 					}
 				});

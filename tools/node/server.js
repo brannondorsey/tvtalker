@@ -17,10 +17,9 @@ var vc = new VideoConcatonator(database, function(){
 		socket.on('message', function(data){
 			
 			console.log('[Notice] Message recieved: ' + data.words.join(' '));
-
 			var output = __dirname + '/data/DocumentRoot/media/video.mov';
 
-			vc.concatonate(data.words, output, function(err, videoPath){
+			vc.concatonate(data.words, output, function(err){
 				
 				if (err) console.log('error concatonating video');
 				else {
@@ -60,6 +59,6 @@ var vc = new VideoConcatonator(database, function(){
 	app.use(express.static(documentRoot));
 
 	server.listen(3000);
-	console.log('server started on http://127.0.0.1:3000');
+	console.log('[Notice] Server started on http://127.0.0.1:3000');
 
 });

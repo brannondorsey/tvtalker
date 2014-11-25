@@ -1,0 +1,40 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#message-container {
+    width: 60%;
+    margin: auto;
+    margin-top: 50px;
+}
+
+#message-box {
+}
+
+#match-container {
+    height: 30px;
+    margin-top: 0px;
+}
+
+#match-container .label {
+    margin-right: 3px;
+    font-size: 10pt;
+}
+
+#past-messages {
+    margin-top: 60px;
+}
+
+#toolbar {
+    margin-top: 5px;
+}
+
+span.match {
+    background-color: rgb(255, 0, 0);
+}
+
+#video {
+    display: block;
+    margin: auto;
+    margin-bottom: 40px;
+}
