@@ -1,4 +1,4 @@
-file '/Volumes/Untitled/hdhomerun/video/word_clips/1297.mov'
-file '/Volumes/Untitled/hdhomerun/video/word_clips/1146.mov'
-file '/Volumes/Untitled/hdhomerun/video/word_clips/258.mov'
-file '/Volumes/Untitled/hdhomerun/video/word_clips/7.mov'
+file '/Volumes/Untitled/hdhomerun/video/word_clips/703.mov'
+file '/Volumes/Untitled/hdhomerun/video/word_clips/465.mov'
+file '/Volumes/Untitled/hdhomerun/video/word_clips/839.mov'
+file '/Volumes/Untitled/hdhomerun/video/word_clips/604.mov'

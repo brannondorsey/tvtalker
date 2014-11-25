@@ -1,5 +1,6 @@
 var _ = require('underscore'),
 fs = require('fs'),
+path = require('path'),
 exec = require('child_process').exec;
 
 function VideoConcatonator(db, callback) {
@@ -33,7 +34,7 @@ function VideoConcatonator(db, callback) {
 	});
 }
 
-VideoConcatonator.prototype.concatonate = function(words, callback) {
+VideoConcatonator.prototype.concatonate = function(words, outputFile, callback) {
 	
 	var self = this;	
 
@@ -62,11 +63,11 @@ VideoConcatonator.prototype.concatonate = function(words, callback) {
 
 		if (err) callback(err, null);
 
-		self._concatonateVideo(orderedResults, callback);
+		self._concatonateVideo(orderedResults, outputFile, callback);
 	});
 }
 
-VideoConcatonator.prototype._concatonateVideo = function(results, callback) {
+VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, callback) {
 	
 	var self = this;
 	var tmp = [];
@@ -87,20 +88,21 @@ VideoConcatonator.prototype._concatonateVideo = function(results, callback) {
 						console.log('[Error] could not read files from' + __dirname + '/../data/messages');
 					} else {
 
-						var outputFilePath = __dirname + '/../data/messages/' + (files.length + 1) +'.mov';
+						// var outputFile = __dirname + '/../data/messages/' + (files.length + 1) +'.mov';
 						
 						console.log('Concatonating video');
-						exec('ffmpeg -f concat -i ' + __dirname + '/../data/tmp.txt ' + outputFilePath, 
+						exec('ffmpeg -y -f concat -i ' + __dirname + '/../data/tmp.txt ' + outputFile, 
 							function (error, stdout, stderr) {
 						    
 						    // console.log('stdout: ' + stdout);
 						    // console.log('stderr: ' + stderr);
 						    
 						    if (error === null) {
-						    	console.log('Success, run the following command to open file:');
-								console.log('open ' + outputFilePath + ' -a "QuickTime Player"');
+						    	console.log('[Notice] video file saved to ' + outputFile);
+								callback(null, path.resolve(outputFile));
 							} else {
 								console.log('[Error] ' + error);
+								callback(true, null);
 							}
 						});
 					}

@@ -17,7 +17,7 @@
             #message-container {
                 width: 60%;
                 margin: auto;
-                margin-top: 100px;
+                margin-top: 50px;
             }
 
             #message-box {
@@ -25,6 +25,7 @@
 
             #match-container {
                 height: 30px;
+                margin-top: 0px;
             }
 
             #match-container .label {
@@ -44,6 +45,12 @@
                 background-color: rgb(255, 0, 0);
             }
 
+            #video {
+                display: block;
+                margin: auto;
+                margin-bottom: 40px;
+            }
+
         </style>
 
         <script src="js/jquery/jquery-2.1.1.min.js"></script>
@@ -51,14 +58,20 @@
 
     </head>
     <body>
+
         <div class="container">
-            <!-- <video controls>
-                <source src="media/output.mov" type="video/mp4">
-                Your browser does not support the video tag.
-            </video> -->
+
             <div id="message-container">
+
+                <video id="video" width="640" controls>
+                    <source src="media/video.mov" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
                 <div id="match-container"></div>
+
                 <textarea id="message-box" class="form-control" rows="1"></textarea>
+
                 <div id="toolbar" class="btn-toolbar pull-right" role="toolbar">               
                     <div class="btn-group btn-group-sm" role="group">
                         <button type="button" class="btn btn-default send-message">
@@ -69,7 +82,9 @@
                         </button>
                     </div>
                 </div>
+
                 <ul id="past-messages" class="list-group"></ul>
+
             </div>
         </div>
 
@@ -79,6 +94,12 @@
             $(document).ready(function(){
                 
                 var socket = io('http://127.0.0.1:3000');
+
+                socket.on('update video', function(data){
+                    var video = $('#video')[0];
+                    video.load();
+                    video.play();
+                });
 
                 $('#message-box').textcomplete([
                     {
