@@ -57,10 +57,10 @@
                 <textarea id="message-box" class="form-control" rows="1"></textarea>
                 <div id="toolbar" class="btn-toolbar pull-right" role="toolbar">               
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-default">
+                        <button type="button" class="btn btn-default send-message">
                             <span class="glyphicon glyphicon-comment"></span>
                         </button>
-                        <button type="button" class="btn btn-default">
+                        <button type="button" class="btn btn-default clear-message">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </div>
@@ -103,18 +103,7 @@
                     // enter
                     if (key == 13) {
                         evt.preventDefault();
-
-                        if ($('#match-container').children().length > 0) {
-                            
-                            var matches = $('#match-container').children();
-                            var matchesContent = [];
-                            for (var i = 0; i < matches.length; i++) {
-                                matchesContent.push($(matches[i]).text());
-                            }
-                            
-                            clearMatches(matchesContent.join(' '));
-                            sendMessage(matchesContent);
-                        }
+                        send();
                     }
 
                 });
@@ -139,6 +128,25 @@
                     }
 
                 });
+
+                $('.clear-message').on('mouseup', function(evt){
+                    clearMatches(getMatches().join(' '));
+                });
+
+                 $('.send-message').on('mouseup', function(evt){
+
+                     send();
+                });
+
+                function send() {
+
+                    if ($('#match-container').children().length > 0) { 
+                        var matches = getMatches();
+                        clearMatches(matches.join(' '));
+                        $('#past-messages').prepend('<li class="list-group-item">' + matches.join(' ') + '</li>');
+                        sendMessage(matches);
+                    }
+                }
                 
                 function searchFunc(term, callback) {
                     
@@ -169,6 +177,16 @@
                     socket.emit('message', data);
                 }
 
+                function getMatches() {
+
+                    var matches = $('#match-container').children();
+                    var matchesContent = [];
+                    for (var i = 0; i < matches.length; i++) {
+                        matchesContent.push($(matches[i]).text());
+                    }
+                    return matchesContent;
+                }
+
                 function replaceFunc(word) {
                     $('#match-container').append('<span class="label label-info">' + word + '</span>');
                 }
@@ -176,7 +194,6 @@
                 function clearMatches(message) {
 
                     $('#match-container').empty();
-                    $('#past-messages').prepend('<li class="list-group-item">' + message + '</li>');
                     $('#message-box').val('');
                 }
 
