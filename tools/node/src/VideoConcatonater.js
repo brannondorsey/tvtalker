@@ -9,13 +9,14 @@ function VideoConcatonator(db, callback) {
 
 	self._db = db;
 	self._videoDir = '/Volumes/Untitled/hdhomerun/video';
+	self._videoEnabled = true;
 	self._segments = undefined;
 	self._programs = undefined;
 
 	fs.exists(self._videoDir, function(exists){
 		
 		if (!exists) {
-			console.log('[Error] Video directory "' + self._videoDir + '" does not exist');
+			console.log('[Warning] Video directory "' + self._videoDir + '" does not exist');
 		}
 
 		// cache sequences and programs
@@ -62,9 +63,13 @@ VideoConcatonator.prototype.concatonate = function(words, outputFile, callback) 
 		}
 
 		if (err) callback(err, null);
-
-		self._concatonateVideo(orderedResults, outputFile, callback);
+		else if (!self._videoEnabled) callback(null, orderedResults);
+		else self._concatonateVideo(orderedResults, outputFile, callback);
 	});
+}
+
+VideoConcatonator.prototype.setVideoEnabled = function(bool) {
+	this._videoEnabled = bool;
 }
 
 VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, callback) {
@@ -104,7 +109,7 @@ VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, ca
 								console.log('[Error] ' + error);
 							}
 
-							callback(err);
+							callback(err, results);
 						});
 					}
 				});

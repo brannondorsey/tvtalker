@@ -2,13 +2,30 @@ var sqlite3 = require('sqlite3').verbose(),
 database = new sqlite3.Database(__dirname + '/../../data/tvtalker.sqlite'),
 AutocompleteAPI = require(__dirname + '/src/AutocompleteAPI'),
 VideoConcatonator = require(__dirname + '/src/VideoConcatonater'),
+CCGenerator = require(__dirname + '/src/CCGenerator'),
+argv = require('argv'),
 express = require('express'),
 app = express(),
 server = require('http').Server(app);
 
+var args = argv.option([{
+    name: 'videodisabled',
+    short: 'd',
+    type: 'string',
+    description: 'Diable video processing',
+    example: "'script --videodisabled' or 'script -d'"
+}]).run().options;
+
 var vc = new VideoConcatonator(database, function(){
 	
+	if (args.videodisabled !== undefined) {
+		console.log('[Notice] Video processing has been disabled.');
+		vc.setVideoEnabled(false);
+	}
+	
+
 	var autocomplete = new AutocompleteAPI(database, 'clips');
+	var CCGen = new CCGenerator();
 
 	var io = require('socket.io')(server);
 
@@ -16,13 +33,14 @@ var vc = new VideoConcatonator(database, function(){
 
 		socket.on('message', function(data){
 			
-			console.log('[Notice] Message recieved: ' + data.words.join(' '));
+			console.log('[Notice] Message recieved: "' + data.words.join(' ') + '"');
 			var output = __dirname + '/data/DocumentRoot/media/video.mov';
 
-			vc.concatonate(data.words, output, function(err){
+			vc.concatonate(data.words, output, function(err, results){
 				
 				if (err) console.log('error concatonating video');
 				else {
+					CCGen.asWebVTT(results);
 					socket.emit('update video');
 				}
 			});
