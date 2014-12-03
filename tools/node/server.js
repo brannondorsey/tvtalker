@@ -3,6 +3,7 @@ database = new sqlite3.Database(__dirname + '/../../data/tvtalker.sqlite'),
 AutocompleteAPI = require(__dirname + '/src/AutocompleteAPI'),
 VideoConcatonator = require(__dirname + '/src/VideoConcatonater'),
 CCGenerator = require(__dirname + '/src/CCGenerator'),
+fs = require('fs'),
 argv = require('argv'),
 express = require('express'),
 app = express(),
@@ -23,7 +24,6 @@ var vc = new VideoConcatonator(database, function(){
 		vc.setVideoEnabled(false);
 	}
 	
-
 	var autocomplete = new AutocompleteAPI(database, 'clips');
 	var CCGen = new CCGenerator();
 
@@ -34,14 +34,18 @@ var vc = new VideoConcatonator(database, function(){
 		socket.on('message', function(data){
 			
 			console.log('[Notice] Message recieved: "' + data.words.join(' ') + '"');
-			var output = __dirname + '/data/DocumentRoot/media/video.mov';
+			var mediaDir = __dirname + '/data/DocumentRoot/media';
 
-			vc.concatonate(data.words, output, function(err, results){
+			vc.concatonate(data.words, mediaDir + '/video.mov', function(err, results){
 				
 				if (err) console.log('error concatonating video');
 				else {
-					CCGen.asWebVTT(results);
-					socket.emit('update video');
+					var captions = CCGen.asWebVTT(results);
+					fs.writeFile(mediaDir + '/captions.vtt', captions, function (err) {
+					  	if (err) throw err;
+					  	console.log('[Notice] Update message sent to clients');
+					  	socket.emit('update video');
+					});
 				}
 			});
 		});

@@ -24,7 +24,9 @@
     "queueit": "0.0.1",
     "sqlite3": "3.0.x",
     "express": "4.x.x",
-    "socket.io": "1.2.x"
+    "socket.io": "1.2.x",
+    "websocket.io": "*",
+    "node-uuid": "*"
   },
   "engines": {
     "node": ">=v0.10.0"

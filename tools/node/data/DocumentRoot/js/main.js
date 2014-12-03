@@ -4,8 +4,14 @@ $(document).ready(function(){
 
     socket.on('update video', function(data){
         var video = $('#video')[0];
-        video.load();
-        video.play();
+        var captions = $('#video track');
+        var src = captions.attr('src');
+        captions.attr('src', '');
+        captions.attr('src', src);
+        setTimeout(function(){
+            video.load();
+            video.play();
+        }, 100);
     });
 
     $('#message-box').textcomplete([

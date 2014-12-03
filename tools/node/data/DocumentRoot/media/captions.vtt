@@ -1,9 +1,16 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:00.400
-How does it look when you print a whole crazy long caption in the video?
-Is this too long?
+00:00:00.000 --> 00:00:00.330 position:10% align:start
+hello
 
-00:00:00.400 --> 00:00:01.000
-Is it working?
+00:00:00.330 --> 00:00:00.500 position:10% align:start
+hello there
 
+00:00:00.500 --> 00:00:00.750 position:10% align:start
+hello there how
+
+00:00:00.750 --> 00:00:01.370 position:10% align:start
+hello there how are
+
+00:00:01.370 --> 00:00:01.670 position:10% align:start
+hello there how are you
