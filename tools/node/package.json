@@ -26,7 +26,8 @@
     "express": "4.x.x",
     "socket.io": "1.2.x",
     "websocket.io": "*",
-    "node-uuid": "*"
+    "node-uuid": "*",
+    "jayson": "1.1.x" 
   },
   "engines": {
     "node": ">=v0.10.0"

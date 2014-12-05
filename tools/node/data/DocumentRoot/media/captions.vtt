@@ -1,16 +1,13 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:00.330 position:10% align:start
-hello
+00:00:00.000 --> 00:00:00.100 position:10% align:start
+i
 
-00:00:00.330 --> 00:00:00.500 position:10% align:start
-hello there
+00:00:00.100 --> 00:00:00.200 position:10% align:start
+i think
 
-00:00:00.500 --> 00:00:00.750 position:10% align:start
-hello there how
+00:00:00.200 --> 00:00:00.530 position:10% align:start
+i think it is
 
-00:00:00.750 --> 00:00:01.370 position:10% align:start
-hello there how are
-
-00:00:01.370 --> 00:00:01.670 position:10% align:start
-hello there how are you
+00:00:00.530 --> 00:00:01.120 position:10% align:start
+i think it is working

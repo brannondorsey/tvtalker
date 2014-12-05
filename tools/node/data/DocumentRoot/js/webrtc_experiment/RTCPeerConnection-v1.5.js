@@ -299,11 +299,17 @@ function RTCPeerConnection(options) {
 
 // getUserMedia
 var video_constraints = {
-    mandatory: { },
+    mandatory: { 
+        minWidth: 1280,
+        minHeight: 720
+    },
     optional: []
 };
 
 function getUserMedia(options) {
+    
+    console.log('options');
+    console.log(options);
     var n = navigator,
         media;
     n.getMedia = n.webkitGetUserMedia || n.mozGetUserMedia;

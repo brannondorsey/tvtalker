@@ -13,13 +13,26 @@
 
         <div class="container">
 
-            <div id="message-container">
+            <div id="video-container">
 
-                <video id="video" width="640" controls>
+                <div id="webcam-address-container" class="input-group">
+                    <input type="text" id="webcam-address" class="form-control" value="http://127.0.0.1:3000/webcamserver.html">
+                    <span class="input-group-btn" id="webcam-connect">
+                       <button class="btn btn-default" type="button">Connect</button>
+                    </span>
+                </div>
+                <video id="large-video" class="webcam-video" width="760px" controls>
                     <source src="media/video.mov" type="video/mp4">
                     <track kind="captions" style="text-align: left;" src="media/captions.vtt" srclang="en-us" label="English"></track>    
                     Your browser does not support the video tag.
                 </video>
+                <video id="small-video" class="app-video" width="200px" controls>
+                    <source src="media/video_2.mov" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div id="message-container">
 
                 <div id="match-container"></div>
 
@@ -42,8 +55,10 @@
         </div>
 
         <script src="js/jquery/jquery-2.1.1.min.js"></script>
-        <script src="js/socket.io-1.2.1.js"></script>
         <script src="js/jquery/jquery.textcomplete.js"></script>
+        <script src="js/webrtc_experiment/RTCPeerConnection-v1.5.js"> </script>
+        <script src="js/webrtc_experiment/broadcast.js"> </script>
+        <script src="js/webcam.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>

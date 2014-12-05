@@ -12,20 +12,10 @@ CCGenerator.prototype.asWebVTT = function(data) {
 	
 	var output = ['WEBVTT', ''];
 	var message = '';
-	var runningTimecode = timecode.init({ framerate: 59.94, drop_frame: true, timecode: "00:00:00;00" });
-
-	_.each(data, function(d){
+		
+	forEachWordTimecode(data, function(d, i, o){
 		
 		message += d.word + ' ';
-
-		var outTimecode = timecode.init({ framerate: 59.94, drop_frame: true, timecode: d.timecode_out});
-		outTimecode.subtract(d.timecode_in);
-
-		var i = formatTimecode(runningTimecode.toString());
-		runningTimecode.add(outTimecode);
-		var o = formatTimecode(runningTimecode.toString());
-		
-
 		output.push(i + '0 --> ' + o + '0 position:10% align:start');
 		output.push(message.trim());
 		output.push('');
@@ -36,6 +26,41 @@ CCGenerator.prototype.asWebVTT = function(data) {
 
 CCGenerator.prototype.asSRT = function(data) {
 		
+}
+
+CCGenerator.prototype.asJSON = function(data) {
+	
+	var output = [];
+	var message = '';
+	
+	forEachWordTimecode(data, function(d, i, o){
+		
+		message += d.word + ' ';
+		output.push({
+			in: i + '0',
+			out: o + '0',
+			text: message.trim()
+		});
+	});
+
+	return output;
+}
+
+function forEachWordTimecode(data, fn) {
+
+	var runningTimecode = timecode.init({ framerate: 59.94, drop_frame: true, timecode: "00:00:00;00" });
+
+	_.each(data, function(d){
+	
+		var outTimecode = timecode.init({ framerate: 59.94, drop_frame: true, timecode: d.timecode_out});
+		outTimecode.subtract(d.timecode_in);
+
+		var i = formatTimecode(runningTimecode.toString());
+		runningTimecode.add(outTimecode);
+		var o = formatTimecode(runningTimecode.toString());
+
+		fn(d, i, o);
+	});
 }
 
 function formatTimecode(timestamp, clipId, offset) {

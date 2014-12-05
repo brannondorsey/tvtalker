@@ -1,7 +1,8 @@
 <script src="//cdn.webrtc-experiment.com/socket.io.js"> </script>
-<script src="//cdn.webrtc-experiment.com/RTCPeerConnection-v1.5.js"> </script>
+<script src="js/webrtc_experiment/RTCPeerConnection-v1.5.js"> </script>
 <script src="//cdn.webrtc-experiment.com/webrtc-broadcasting/broadcast.js"> </script>
 
+</style>
 <select id="broadcasting-option">
     <option>Audio + Video</option>
     <option>Only Audio</option>
@@ -91,7 +92,7 @@
     var roomsList = document.getElementById('rooms-list');
     var broadcastingOption = document.getElementById('broadcasting-option');
 
-    document.getElementById('broadcasting-option').onclick = function() {
+    setupNewBroadcast.onclick = function() {
         this.disabled = true;
 
         captureUserMedia(function() {
@@ -113,11 +114,10 @@
                 audio: true,
                 video: false
             };
-        }
-        if (option === 'Screen') {
+        } else if (option === 'Screen') {
             var video_constraints = {
                 mandatory: {
-                    chromeMediaSource: 'screen'
+                    chromeMediaSource: 'screen',
                 },
                 optional: []
             };
@@ -125,7 +125,18 @@
                 audio: false,
                 video: video_constraints
             };
+        } else {
+            console.log('got here');
+            constraints = {
+                audio: true,
+                video: true,
+                mandatory: {
+                    maxWidth: 640,
+                    maxHeight: 360
+                }
+            }
         }
+
 
         var htmlElement = document.createElement(option === 'Only Audio' ? 'audio' : 'video');
         htmlElement.setAttribute('autoplay', true);

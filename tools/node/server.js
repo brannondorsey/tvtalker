@@ -5,6 +5,7 @@ VideoConcatonator = require(__dirname + '/src/VideoConcatonater'),
 CCGenerator = require(__dirname + '/src/CCGenerator'),
 fs = require('fs'),
 argv = require('argv'),
+jayson = require('jayson'),
 express = require('express'),
 app = express(),
 server = require('http').Server(app);
@@ -16,6 +17,8 @@ var args = argv.option([{
     description: 'Diable video processing',
     example: "'script --videodisabled' or 'script -d'"
 }]).run().options;
+
+var JSONRPCclient = jayson.client.http({ port: 8954, host: '127.0.0.1', path:"/post" });
 
 var vc = new VideoConcatonator(database, function(){
 	
@@ -35,14 +38,33 @@ var vc = new VideoConcatonator(database, function(){
 			
 			console.log('[Notice] Message recieved: "' + data.words.join(' ') + '"');
 			var mediaDir = __dirname + '/data/DocumentRoot/media';
-
-			vc.concatonate(data.words, mediaDir + '/video.mov', function(err, results){
+			var videoPath = mediaDir + '/video.mov';
+			vc.concatonate(data.words, videoPath, function(err, results){
 				
 				if (err) console.log('error concatonating video');
 				else {
+
 					var captions = CCGen.asWebVTT(results);
 					fs.writeFile(mediaDir + '/captions.vtt', captions, function (err) {
+					  	
 					  	if (err) throw err;
+					  	
+					  	var appData = {
+							message: data.words.join(' '),
+							videoPath: videoPath,
+							closedCaptions: CCGen.asJSON(results),
+						}
+					  	
+					  	JSONRPCclient.request('requestPlayVideo', appData, function(err, reply) {
+							
+							if (err) {
+								if (err.code == 'ECONNREFUSED') console.log('[Error] Could not connect to display app');
+								else console.log(err);
+							}
+						 	
+						 	console.log('[Notice] Display app recieved message');
+						});
+					  	
 					  	console.log('[Notice] Update message sent to clients');
 					  	socket.emit('update video');
 					});
