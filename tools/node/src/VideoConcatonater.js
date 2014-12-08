@@ -87,31 +87,17 @@ VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, ca
 				console.log(err);
 			} else {
 				
-				fs.readdir(__dirname + '/../data/messages', function(err, files){
-
-					if (err) {
-						console.log('[Error] could not read files from' + __dirname + '/../data/messages');
+				console.log('[Notice] concatonating video');
+				exec('ffmpeg -y -f concat -i ' + __dirname + '/../data/tmp.txt ' + outputFile, 
+					function (error, stdout, stderr) {
+					
+				    if (error === null) {
+				    	console.log('[Notice] video file saved to ' + outputFile);
 					} else {
-
-						// var outputFile = __dirname + '/../data/messages/' + (files.length + 1) +'.mov';
-						
-						console.log('Concatonating video');
-						exec('ffmpeg -y -f concat -i ' + __dirname + '/../data/tmp.txt ' + outputFile, 
-							function (error, stdout, stderr) {
-						    
-						    // console.log('stdout: ' + stdout);
-						    // console.log('stderr: ' + stderr);
-						    
-
-						    if (error === null) {
-						    	console.log('[Notice] video file saved to ' + outputFile);
-							} else {
-								console.log('[Error] ' + error);
-							}
-
-							callback(err, results);
-						});
+						console.log('[Error] ' + error);
 					}
+
+					callback(err, results);
 				});
 			}
 		});
