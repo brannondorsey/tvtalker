@@ -1,0 +1,57 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#message-container {
+    width: 60%;
+    margin: auto;
+    margin-top: 50px;
+}
+
+#webcam-address-container {
+    margin-bottom: 10px;
+    width: 300px;
+}
+
+#message-box {
+}
+
+#match-container {
+    height: 30px;
+    margin-top: 0px;
+}
+
+#match-container .label {
+    margin-right: 3px;
+    font-size: 10pt;
+}
+
+#past-messages {
+    margin-top: 60px;
+}
+
+#toolbar {
+    margin-top: 5px;
+}
+
+span.match {
+    background-color: rgb(255, 0, 0);
+}
+
+#video-container {
+    width: 980px;
+    margin: 50px auto 40px auto;
+    clear: both;
+    overflow: auto;
+}
+
+#small-video {
+    cursor: pointer;
+}
+
+video {
+    display: block;
+    float: left;
+    margin-right: 5px;
+}
+
