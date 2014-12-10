@@ -130,8 +130,8 @@ if (!shell.which('ffmpeg')) {
 
 					_.once(function(){
 						
-						if (fs.existsSync(__dirname + '/data/tmp.txt')) {
-							fs.unlinkSync(__dirname + '/data/tmp.txt');
+						if (fs.existsSync(__dirname + '/../data/tmp.txt')) {
+							fs.unlinkSync(__dirname + '/../data/tmp.txt');
 						}
 					});
 
@@ -144,24 +144,24 @@ if (!shell.which('ffmpeg')) {
 				// console.log('splicing from ' + inTime + ' to ' + outTime);
 
 				// var inputFile = args.segmentDir + '/' + segments[clipData[i].segmentId - 1];
-				// var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/data/clips/' + i + path.extname(inputFile);
+				// var command = 'ffmpeg -y -i ' + inputFile + ' -c copy -ss ' + inTime + ' -to ' + outTime + ' ' + __dirname + '/../data/clips/' + i + path.extname(inputFile);
 				// var result = shell.exec(command, {silent: true}).output;
 			}
 
-			fs.writeFile(__dirname + '/data/tmp.txt', tmp.join('\n'), function(err){
+			fs.writeFile(__dirname + '/../data/tmp.txt', tmp.join('\n'), function(err){
 				
 				if (err) {
-					console.log('error saving ' + __dirname + '/data/tmp.txt');
+					console.log('error saving ' + __dirname + '/../data/tmp.txt');
 				} else {
 					
-					var files = fs.readdirSync(__dirname + '/data/messages');
+					var files = fs.readdirSync(__dirname + '/../data/messages');
 					if (_.isUndefined(files) || _.isNull(files)) {
-						console.log('Error reading files from' + __dirname + '/data/messages');
+						console.log('Error reading files from' + __dirname + '/../data/messages');
 						process.exit(1);
 					}
 
-					var outputFilePath = __dirname + '/data/messages/' + (files.length + 1) +'.mov';
-					if (shell.exec('ffmpeg -f concat -i ' + __dirname + '/data/tmp.txt -c copy ' + outputFilePath, {silent: true}).code == 0) {
+					var outputFilePath = __dirname + '/../data/messages/' + (files.length + 1) +'.mov';
+					if (shell.exec('ffmpeg -f concat -i ' + __dirname + '/../data/tmp.txt -c copy ' + outputFilePath, {silent: true}).code == 0) {
 							
 						console.log('Success, run the following command to open file:');
 						console.log('open ' + outputFilePath + ' -a "QuickTime Player"');
@@ -262,9 +262,9 @@ if (!shell.which('ffmpeg')) {
 // load clips.csv and use it to fill clips array
 function loadData(callback) {
 
-	var clipsFile    = __dirname + '/data/clips.csv';
-	var programsFile = __dirname + '/data/programs.csv';
-	var segmentsFile = __dirname + '/data/segments.csv';
+	var clipsFile    = __dirname + '/../data/clips.csv';
+	var programsFile = __dirname + '/../data/programs.csv';
+	var segmentsFile = __dirname + '/../data/segments.csv';
 
 	// load programs csv
 	fs.readFile(programsFile, { encoding: 'utf-8' }, function(err, programsData){
