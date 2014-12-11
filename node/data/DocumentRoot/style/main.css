@@ -49,6 +49,10 @@ span.match {
     cursor: pointer;
 }
 
+.bootstrap-switch {
+    margin-top: 5px;
+}
+
 video {
     display: block;
     float: left;

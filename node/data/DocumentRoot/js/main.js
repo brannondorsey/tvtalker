@@ -76,7 +76,7 @@ $(document).ready(function(){
         clearMatches(getMatches().join(' '));
     });
 
-     $('.send-message').on('mouseup', function(evt){
+    $('.send-message').on('mouseup', function(evt){
 
          send();
     });
@@ -96,6 +96,15 @@ $(document).ready(function(){
         swapVideos();
      });
 
+     $("#background-video-switch").bootstrapSwitch();
+     $("#background-video-switch").on('switchChange.bootstrapSwitch', function(event, state) {
+	  	
+	  	var data = {
+	  		displayBackgroundVideo: state
+	  	};
+
+	 	socket.emit('background video', data);
+	 });
 
     function swapVideos() {
 

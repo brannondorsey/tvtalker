@@ -58,19 +58,40 @@ var vc = new VideoConcatonator(database, function(){
 					  	JSONRPCclient.request('requestPlayVideo', appData, function(err, reply) {
 							
 							if (err) {
-								if (err.code == 'ECONNREFUSED') console.log('[Error] Could not connect to display app');
+								if (err.code == 'ECONNREFUSED') appConnectionError();
 								else console.log(err);
-							}
+							} else console.log('[Notice] Display app recieved message');
 						 	
-						 	console.log('[Notice] Display app recieved message');
 						});
 					  	
-					  	console.log('[Notice] Update message sent to clients');
+					  	console.log('[Notice] Update message sent to client');
 					  	socket.emit('update video');
 					});
 				}
 			});
 		});
+
+		socket.on('background video', function(data){
+			
+			console.log('[Notice] "background video" message recieved. Setting display background video to: ' + data);
+			
+			var method = (data.displayBackgroundVideo) ? 'backgroundVideoOn' : 'backgroundVideoOff'; 
+			
+			JSONRPCclient.request(method, data, function(err, reply) {
+
+				if (err) {
+					if (err.code == 'ECONNREFUSED') appConnectionError();
+					else console.log(err);
+				} else console.log('[Notice] "Display background video: ' + data.displayBackgroundVideo + '" sent to client');
+
+			});
+		});
+
+		function appConnectionError() {
+
+			console.log('[Error] Could not connect to display app');
+		}
+
 	});
 
 	var documentRoot = __dirname + '/data/DocumentRoot';
