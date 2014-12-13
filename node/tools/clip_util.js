@@ -54,6 +54,12 @@ var args = argv.option([{
 		short: 't',
 	    description: 'if --cut has been specified, this value denotes the end id',
 	    example: "'script --toId=1' or 'script -t 1'"
+	},{
+		name: 'outputDir',
+		type: 'string',
+		short: 'd',
+	    description: 'if --cut has been specified, this value specifies the folder to save clips to',
+	    example: "'script --outputDir=/path/to/dir' or 'script -d /path/to/dir'"
 	}]).run().options;
 
 if (!shell.which('ffmpeg')) {
@@ -181,6 +187,7 @@ if (!shell.which('ffmpeg')) {
 
 		var fromId = 1;
 		var toId = undefined;
+		var outputDir = videoDir + '/word_clips';
 
 		if (!_.isUndefined(args.fromId)) {
 			fromId = parseInt(args.fromId);
@@ -190,6 +197,16 @@ if (!shell.which('ffmpeg')) {
 		if (!_.isUndefined(args.toId)) {
 			toId = parseInt(args.toId);
 			console.log('--toId set to ' + toId);
+		}
+
+		if (!_.isUndefined(args.outputDir)) {
+			
+			if (fs.existsSync(path.resolve(args.outputDir))) {
+				outputDir = path.resolve(args.outputDir);
+			} else {
+				console.log('outputDir "' + args.outputDir + '" does not exist');
+				process.exit(1);
+			}
 		}
 		
 		if (toId !== undefined) console.log('cutting clips ' + fromId + ' to ' + toId);
@@ -218,7 +235,7 @@ if (!shell.which('ffmpeg')) {
 			var timecodeOut = formatTimecode(row[clips.key.timecode_out], row[clips.key.id], 2);
 
 			var inputFile = videoDir + '/programs/segments/' + program + '/' + segment;
-			var outputFile = videoDir + '/word_clips/' + i + path.extname(inputFile);
+			var outputFile = outputDir + '/' + i + path.extname(inputFile);
 
 			var arguments = ('-y -i ' + inputFile + ' -c:v copy -c:a libfaac -ac 2 -ss ' + timecodeIn + ' -to ' + timecodeOut + ' ' + outputFile).split(' ');		
 			
