@@ -88,7 +88,7 @@ VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, ca
 			} else {
 				
 				console.log('[Notice] concatonating video');
-				exec('ffmpeg -y -f concat -i ' + __dirname + '/../data/tmp.txt ' + outputFile, 
+				exec('ffmpeg -y -f concat -i ' + __dirname + '/../data/tmp.txt -c copy ' + outputFile, 
 					function (error, stdout, stderr) {
 					
 				    if (error === null) {
@@ -107,7 +107,7 @@ VideoConcatonator.prototype._concatonateVideo = function(results, outputFile, ca
 
 		for (var i = 0; i < results.length; i++) {
 			
-			var clipPath = self._videoDir + '/word_clips/' + results[i].id + '.mov';
+			var clipPath = self._videoDir + '/word_clips_h264/' + results[i].id + '.mov';
 			tmp.push('file \'' + clipPath + '\'');
 
 			fs.exists(clipPath, function(exists){
