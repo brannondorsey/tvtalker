@@ -80,6 +80,31 @@ Make sure that the `MPEG_DIR` and `H264_DIR` are set appropriately in the script
 
 ### Create/update SQLite Database
 
+Using the popular Firefox add-on *SQLite Manager* create/update a `tvtalker.sqlite` database located in the `node/data` folder with table names and data that are identical to the `clips.csv`, `segments.csv`, and `programs.csv` files located in the same folder. This should prove trivial as *SQLite Manager* has an import CSV feature (be sure to select the "First row contains column names" checkbox).
+
+The goal is to have an SQLite database that is identical to the CSV files as `server.js` uses this file, while `clip_util.js` uses the CSVs, to represent the same data. I recognize that this repetition is misleading and ultimately poor practice.
+
+Use the following SQL statements as a reference for table structure and datatypes.
+
+#### clips
+
+```
+CREATE TABLE "clips" ("id" INTEGER PRIMARY KEY  NOT NULL  UNIQUE , "program_id" INTEGER NOT NULL , "segment_id" INTEGER NOT NULL , "word" VARCHAR(256) NOT NULL , "timecode_in" CHAR(11) NOT NULL , "timecode_out" CHAR(11) NOT NULL , "during_commercial" BOOL NOT NULL , "voice_onscreen" BOOL NOT NULL )
+```
+
+#### programs
+
+```
+CREATE TABLE "programs" ("id" INTEGER PRIMARY KEY  NOT NULL  UNIQUE , "program" INTEGER NOT NULL , "network" VARCHAR(50) NOT NULL , "station" VARCHAR(50) NOT NULL , "recording_date" CHAR(25) NOT NULL , "recording_location" VARCHAR(100) NOT NULL , "basename" VARCHAR(100) NOT NULL , "genre" VARCHAR(50) NOT NULL , "recording_fps" FLOAT NOT NULL , "recording_duration" VARCHAR(10) NOT NULL , "program_duration" VARCHAR(10) NOT NULL , "local" BOOL NOT NULL )
+```
+
+#### segments
+
+```
+CREATE TABLE "segments" ("id" INTEGER PRIMARY KEY  NOT NULL  UNIQUE , "program_id" INTEGER NOT NULL , "segment" VARCHAR(50) NOT NULL )
+```
+
+Done. You should now be able to use the TVTalker-server and TVTalker-app with your new data!
 
 <!--
 ### Cut segments into words
