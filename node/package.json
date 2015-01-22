@@ -27,7 +27,8 @@
     "socket.io": "1.2.x",
     "websocket.io": "*",
     "node-uuid": "*",
-    "jayson": "1.1.x" 
+    "jayson": "1.1.x",
+    "node-static": "0.7.x"
   },
   "engines": {
     "node": ">=v0.10.0"

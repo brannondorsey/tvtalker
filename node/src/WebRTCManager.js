@@ -12,7 +12,7 @@ uuid = require('node-uuid');
 app.use(express["static"](__dirname + '/../data/DocumentRoot'));
 
 server = app.listen(3002);
-console.log('Server started at port http://127.0.0.1:' + 3002);
+console.log('Server started at port http://127.0.0.1:3002');
 
 io = ws.attach(server);
 

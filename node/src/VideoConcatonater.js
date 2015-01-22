@@ -8,7 +8,7 @@ function VideoConcatonator(db, callback) {
 	var self = this;
 
 	self._db = db;
-	self._videoDir = '/Volumes/Untitled/hdhomerun/video';
+	self._videoDir = '/Volumes/Lexar';
 	self._videoEnabled = true;
 	self._segments = undefined;
 	self._programs = undefined;

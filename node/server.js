@@ -3,6 +3,7 @@ database = new sqlite3.Database(__dirname + '/data/tvtalker.sqlite'),
 AutocompleteAPI = require(__dirname + '/src/AutocompleteAPI'),
 VideoConcatonator = require(__dirname + '/src/VideoConcatonater'),
 CCGenerator = require(__dirname + '/src/CCGenerator'),
+WebRTCSignaler = require(__dirname + '/src/WebRTCSignaler'),
 fs = require('fs'),
 argv = require('argv'),
 jayson = require('jayson'),
@@ -27,6 +28,7 @@ var vc = new VideoConcatonator(database, function(){
 		vc.setVideoEnabled(false);
 	}
 	
+	var webRTCSignaler = new WebRTCSignaler();
 	var autocomplete = new AutocompleteAPI(database, 'clips');
 	var CCGen = new CCGenerator();
 
@@ -123,7 +125,10 @@ var vc = new VideoConcatonator(database, function(){
 
 	app.use(express.static(documentRoot));
 
+	webRTCSignaler.start(3002);
 	server.listen(3000);
-	console.log('[Notice] Server started on http://127.0.0.1:3000');
+
+	console.log('[Notice] WebRTCSignaler server started at http://127.0.0.1:3002');
+	console.log('[Notice] Web server started on http://127.0.0.1:3000');
 
 });
