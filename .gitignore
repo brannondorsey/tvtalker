@@ -5,3 +5,4 @@ tests/
 !tests/clips/.gitkeep
 *.mov
 ~$*.xlsx
+scan.log
