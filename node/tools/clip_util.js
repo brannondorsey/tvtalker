@@ -250,7 +250,8 @@ if (!shell.which('ffmpeg')) {
 		      		// process error, this is behaving incorrectly
 		      		// with ffmpeg
 		      		if (arguments.length == 2) {
-
+		      			console.log('FFMPEG error detected:');
+		      			console.log(err);
 		      		} else {
 
 		      			// process exit

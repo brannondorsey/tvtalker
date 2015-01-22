@@ -1,5 +1,7 @@
 id,program,network,station,recording_date,recording_location,basename,genre,recording_fps,recording_duration,program_duration,local
-1,Fox 32 News at Nine,FOX,WFLDDT,2014-11-09T21:00:00-06:00,"Chicago, IL, USA",2014-11-09_WFLDDT_Fox-32-News-at-Nine,News,59.94,00:57:30,01:00:00,1
-2,CBS 32 News at 10PM,CBS,WBBMDT,2014-11-09T22:00:00-06:00,"Chicago, IL, USA",2014-11-09_WBBMDT_CBS-2-News-at-10PM,News,59.94,00:55:18,01:00:00,1
-3,Inside Edition Weekend,ABC,WLSDT,2014-11-09T23:00:00-06:00,"Chicago, IL, USA",2014-11-09_WLSDT_Inside_Edition_Weekend,Entertainment News,59.94,00:31:06,00:30:00,0
-4,Good Day Chicago,FOX,WFLDDT,2014-12-09T08:30:00-06:00,"Chicago, IL, USA",2014-12-09_WFLDDT_Good_Day_Chicago,News,59.94,00:27:44,06:30:00,1
+1,Fox 32 News at Nine,FOX,WFLDDT,2014-11-09T21:00:00-06:00,"Chicago, IL, USA",2014-11-09_WFLDDT_Fox-32-News-at-Nine,News,59.94,0:57:30,1:00:00,1
+2,CBS 32 News at 10PM,CBS,WBBMDT,2014-11-09T22:00:00-06:00,"Chicago, IL, USA",2014-11-09_WBBMDT_CBS-2-News-at-10PM,News,59.94,0:55:18,1:00:00,1
+3,Inside Edition Weekend,ABC,WLSDT,2014-11-09T23:00:00-06:00,"Chicago, IL, USA",2014-11-09_WLSDT_Inside_Edition_Weekend,Entertainment News,59.94,0:31:06,0:30:00,0
+4,Good Day Chicago,FOX,WFLDDT,2014-12-09T08:30:00-06:00,"Chicago, IL, USA",2014-12-09_WFLDDT_Good_Day_Chicago,News,59.94,0:27:44,6:30:00,1
+5,Good Day Chicago,FOX,WFLDDT,2014-12-18T09:00:00-06:00,"Chicago, IL, USA",2014-12-18_WFLDDT_Good-Day-Chicago_1,News,59.94,0:39:19,6:30:00,1
+6,Good Day Chicago,FOX,WFLDDT,2014-12-18T09:30:00-06:00,"Chicago, IL, USA",2014-12-18_WFLDDT_Good-Day-Chicago_2,News,59.94,0:19:25,6:30:00,1
